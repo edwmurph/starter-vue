@@ -1,7 +1,3 @@
-<script setup>
-import Button from 'primevue/button';
-</script>
-
 <template>
   <div>
     <a
@@ -17,8 +13,37 @@ import Button from 'primevue/button';
   </div>
   <div>Hello World</div>
   <Button label="Test" />
+  <div v-if="loading">
+    Loading...
+  </div>
+  <div v-if="error">
+    Error: {{ error }}
+  </div>
+  <div v-if="data">
+    <h2>API Call Result:</h2>
+    <p>{{ data.updated }}</p>
+  </div>
 </template>
+<script setup>
+import { ref } from 'vue';
+import Button from 'primevue/button';
+import axios from 'axios';
 
+const loading = ref( true );
+const data = ref( null );
+const error = ref( null );
+
+axios.get('https://storage.googleapis.com/edwmurph-public/public-stats.json')
+  .then( ( response ) => {
+    loading.value = false;
+    data.value = response.data;
+  })
+  .catch( ( err ) => {
+    console.log( err );
+    loading.value = false;
+    error.value = err;
+  });
+</script>
 <style scoped>
 .logo {
   height: 6em;
